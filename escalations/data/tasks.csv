@@ -1,0 +1,4 @@
+task_id,task_type,deadline,assigned_nurse,status,escalation_to
+1,medication,2025-06-10T14:00:00,Alice_Johnson,pending,
+2,vitals,2025-06-10T14:05:00,Bob_Smith,pending,
+3,charting,2025-06-10T14:10:00,David_Brown,escalated,Carol_Williams

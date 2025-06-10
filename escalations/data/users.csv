@@ -1,0 +1,5 @@
+user_id,first_name,last_name,role
+Alice_Johnson,Alice,Johnson,floor_nurse
+Bob_Smith,Bob,Smith,floor_nurse
+Carol_Williams,Carol,Williams,supervisor
+David_Brown,David,Brown,charge_nurse

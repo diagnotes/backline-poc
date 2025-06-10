@@ -1,0 +1,4 @@
+rule_id,rule_text
+1,If task is not completed in 2 minutes, escalate to the charge nurse
+2,If nurse is unavailable, escalate to the supervisor
+3,If task type is medication and not completed in 5 minutes, escalate to the charge nurse
