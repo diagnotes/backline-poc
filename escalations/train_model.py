@@ -2,9 +2,11 @@ import pandas as pd
 import boto3
 import os
 import joblib
+import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import classification_report
+from sklearn.preprocessing import StandardScaler
 from botocore.exceptions import ClientError
 
 # Initialize S3 client
@@ -39,23 +41,28 @@ train_data = pd.read_csv(train_local, header=None)
 val_data = pd.read_csv(val_local, header=None)
 
 # Split features and target
-X_train = train_data.iloc[:, 1:]
-y_train = train_data.iloc[:, 0]
-X_val = val_data.iloc[:, 1:]
-y_val = val_data.iloc[:, 0]
+X_train = train_data.iloc[:, 1:].values.astype(np.float64)
+y_train = train_data.iloc[:, 0].values.astype(np.int64)
+X_val = val_data.iloc[:, 1:].values.astype(np.float64)
+y_val = val_data.iloc[:, 0].values.astype(np.int64)
+
+# Scale features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_val = scaler.transform(X_val)
 
 # Check number of samples and class distribution
 n_samples = len(y_train)
-class_counts = y_train.value_counts()
+class_counts = pd.Series(y_train).value_counts()
 print(f"Number of training samples: {n_samples}")
 print(f"Number of validation samples: {len(y_val)}")
 print(f"Training class distribution:\n{class_counts}")
-print(f"Validation class distribution:\n{y_val.value_counts()}")
+print(f"Validation class distribution:\n{pd.Series(y_val).value_counts()}")
 
 # Train model
 model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
 
-# Try cross-validation with stratified KFold
+# Cross-validation
 min_samples_per_class = class_counts.min()
 cv = min(5, n_samples, min_samples_per_class)
 if cv >= 2:
@@ -77,17 +84,25 @@ model.fit(X_train, y_train)
 # Evaluate on validation set
 if len(y_val) > 0:
     y_pred = model.predict(X_val)
+    print("Predicted classes:", y_pred)
+    print("True classes:", y_val)
     print("Classification Report:")
     print(classification_report(y_val, y_pred, zero_division=0))
 else:
     print("No validation data available")
 
-# Save model
+# Save model and scaler
 model_local = os.path.join(data_dir, 'model.job')
+scaler_local = os.path.join(data_dir, 'scaler.job')
 joblib.dump(model, model_local)
+joblib.dump(scaler, scaler_local)
 print(f"Saved model to {model_local}")
+print(f"Saved scaler to {scaler_local}")
 
 # Upload to S3
 model_s3_key = 'model/model.job'
+scaler_s3_key = 'model/scaler.job'
 s3.upload_file(model_local, bucket, model_s3_key)
+s3.upload_file(scaler_local, bucket, scaler_s3_key)
 print(f"Uploaded to s3://{bucket}/{model_s3_key}")
+print(f"Uploaded to s3://{bucket}/{scaler_s3_key}")

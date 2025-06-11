@@ -55,22 +55,26 @@ users_local = os.path.join(data_dir, 'users.csv')
 
 if not os.path.exists(tasks_local):
     tasks_data = pd.DataFrame([
-        {'task_id': 1, 'task_type': 'medication', 'deadline': '2025-06-11T17:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': ''},
-        {'task_id': 2, 'task_type': 'vitals', 'deadline': '2025-06-11T17:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 1, 'task_type': 'medication', 'deadline': '2025-06-11T17:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 2, 'task_type': 'vitals', 'deadline': '2025-06-11T17:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 3, 'task_type': 'charting', 'deadline': '2025-06-11T17:10:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 4, 'task_type': 'medication', 'deadline': '2025-06-11T17:15:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
         {'task_id': 5, 'task_type': 'vitals', 'deadline': '2025-06-11T17:20:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 6, 'task_type': 'charting', 'deadline': '2025-06-11T17:25:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 6, 'task_type': 'charting', 'deadline': '2025-06-11T17:25:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 7, 'task_type': 'medication', 'deadline': '2025-06-11T17:30:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 8, 'task_type': 'vitals', 'deadline': '2025-06-11T17:35:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 9, 'task_type': 'charting', 'deadline': '2025-06-11T17:40:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 9, 'task_type': 'charting', 'deadline': '2025-06-11T17:40:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 10, 'task_type': 'medication', 'deadline': '2025-06-11T17:45:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 11, 'task_type': 'vitals', 'deadline': '2025-06-11T17:50:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 11, 'task_type': 'vitals', 'deadline': '2025-06-11T17:50:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 12, 'task_type': 'charting', 'deadline': '2025-06-11T17:55:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'David_Brown'},
         {'task_id': 13, 'task_type': 'medication', 'deadline': '2025-06-11T18:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 14, 'task_type': 'vitals', 'deadline': '2025-06-11T18:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 15, 'task_type': 'charting', 'deadline': '2025-06-11T18:10:00', 'assigned_nurse': 'David_Brown', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 15, 'task_type': 'charting', 'deadline': '2025-06-11T18:10:00', 'assigned_nurse': 'David_Brown', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 16, 'task_type': 'medication', 'deadline': '2025-06-11T18:15:00', 'assigned_nurse': 'Carol_Williams', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 17, 'task_type': 'vitals', 'deadline': '2025-06-11T18:20:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'David_Brown'},
+        {'task_id': 18, 'task_type': 'charting', 'deadline': '2025-06-11T18:25:00', 'assigned_nurse': 'Frank_Miller', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 19, 'task_type': 'medication', 'deadline': '2025-06-11T18:30:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 20, 'task_type': 'vitals', 'deadline': '2025-06-11T18:35:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
     ])
     tasks_data.to_csv(tasks_local, index=False)
     print(f"Created local file {tasks_local}")
@@ -189,7 +193,11 @@ X = data[features]
 y = data['escalation_to']
 
 # Split data
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+try:
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+except ValueError as e:
+    print(f"Stratified split failed: {e}. Using non-stratified split.")
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Save training and validation data
 train_data = pd.concat([y_train, X_train], axis=1)
