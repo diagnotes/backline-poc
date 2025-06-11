@@ -15,7 +15,7 @@ data_dir = 'data'
 if not os.path.exists(data_dir):
     os.makedirs(data_dir)
 
-# Download training data (use train.csv only)
+# Download training data
 train_s3_key = 'data/train/train.csv'
 train_local = os.path.join(data_dir, 'train.csv')
 try:
@@ -29,26 +29,36 @@ except ClientError as e:
         raise e
 
 # Load data
-train_data = pd.read_csv(train_local, header=None)
-X = train_data.iloc[:, 1:]
-y = train_data.iloc[:, 0]
+data = pd.read_csv(train_local, header=None)
+X = data.iloc[:, 1:]  # Features
+y = data.iloc[:, 0]   # Target
+
+# Check number of samples
+n_samples = len(y)
+print(f"Number of training samples: {n_samples}")
+
+# Adjust cross-validation folds
+cv = min(3, n_samples)  # Use 2 folds if n_samples < 3
+if n_samples < 2:
+    print("Error: Too few samples for cross-validation")
+    exit(1)
 
 # Train with cross-validation
 model = RandomForestClassifier(n_estimators=100, random_state=42)
-scores = cross_val_score(model, X, y, cv=3, scoring='f1_weighted')
+scores = cross_val_score(model, X, y, cv=cv, scoring='f1_weighted')
 print("Cross-Validation F1 Scores:", scores)
 print("Mean F1 Score:", scores.mean())
 print("Standard Deviation:", scores.std())
 
-# Train final model on all data
+# Train final model
 model.fit(X, y)
 
 # Save model
-model_local = os.path.join(data_dir, 'model.joblib')
+model_local = os.path.join(data_dir, 'model.job')
 joblib.dump(model, model_local)
 print(f"Saved model to {model_local}")
 
 # Upload to S3
-model_s3_key = 'model/model.joblib'
+model_s3_key = 'model/model.job'
 s3.upload_file(model_local, bucket, model_s3_key)
-print(f"Uploaded model to s3://{bucket}/{model_s3_key}")
+print(f"Uploaded to s3://{bucket}/{model_s3_key}")
