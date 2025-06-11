@@ -9,7 +9,7 @@ from botocore.exceptions import ClientError
 # Initialize S3 client
 s3 = boto3.client('s3')
 bucket = 'escalation-poc'
-data_dir = 'data'
+data_dir = 'escalations/data'
 
 # Create data directory
 if not os.path.exists(data_dir):
