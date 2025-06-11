@@ -55,12 +55,16 @@ users_local = os.path.join(data_dir, 'users.csv')
 
 if not os.path.exists(tasks_local):
     tasks_data = pd.DataFrame([
-        {'task_id': 1, 'task_type': 'medication', 'deadline': '2025-06-11T16:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': ''},
-        {'task_id': 2, 'task_type': 'vitals', 'deadline': '2025-06-11T16:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': ''},
-        {'task_id': 3, 'task_type': 'charting', 'deadline': '2025-06-11T16:10:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 4, 'task_type': 'medication', 'deadline': '2025-06-11T16:15:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': ''},
-        {'task_id': 5, 'task_type': 'vitals', 'deadline': '2025-06-11T16:20:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 6, 'task_type': 'charting', 'deadline': '2025-06-11T16:25:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 1, 'task_type': 'medication', 'deadline': '2025-06-11T17:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 2, 'task_type': 'vitals', 'deadline': '2025-06-11T17:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 3, 'task_type': 'charting', 'deadline': '2025-06-11T17:10:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 4, 'task_type': 'medication', 'deadline': '2025-06-11T17:15:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 5, 'task_type': 'vitals', 'deadline': '2025-06-11T17:20:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'David_Brown'},
+        {'task_id': 6, 'task_type': 'charting', 'deadline': '2025-06-11T17:25:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 7, 'task_type': 'medication', 'deadline': '2025-06-11T17:30:00', 'assigned_nurse': 'Eve_Davis', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 8, 'task_type': 'vitals', 'deadline': '2025-06-11T17:35:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 9, 'task_type': 'charting', 'deadline': '2025-06-11T17:40:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 10, 'task_type': 'medication', 'deadline': '2025-06-11T17:45:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': ''},
     ])
     tasks_data.to_csv(tasks_local, index=False)
     print(f"Created local file {tasks_local}")
@@ -72,6 +76,7 @@ if not os.path.exists(schedules_local):
         {'user_id': 'Carol_Williams', 'shift_date': '2025-06-11', 'shift_start': '2025-06-11T16:00:00', 'shift_end': '2025-06-12T00:00:00', 'availability': 1},
         {'user_id': 'David_Brown', 'shift_date': '2025-06-11', 'shift_start': '2025-06-11T08:00:00', 'shift_end': '2025-06-11T20:00:00', 'availability': 1},
         {'user_id': 'Eve_Davis', 'shift_date': '2025-06-11', 'shift_start': '2025-06-11T10:00:00', 'shift_end': '2025-06-11T18:00:00', 'availability': 0},
+        {'user_id': 'Frank_Miller', 'shift_date': '2025-06-11', 'shift_start': '2025-06-11T14:00:00', 'shift_end': '2025-06-11T22:00:00', 'availability': 1},
     ])
     schedules_data.to_csv(schedules_local, index=False)
     print(f"Created local file {schedules_local}")
@@ -83,6 +88,7 @@ if not os.path.exists(users_local):
         {'user_id': 'Carol_Williams', 'first_name': 'Carol', 'last_name': 'Williams', 'role': 'supervisor'},
         {'user_id': 'David_Brown', 'first_name': 'David', 'last_name': 'Brown', 'role': 'charge_nurse'},
         {'user_id': 'Eve_Davis', 'first_name': 'Eve', 'last_name': 'Davis', 'role': 'floor_nurse'},
+        {'user_id': 'Frank_Miller', 'first_name': 'Frank', 'last_name': 'Miller', 'role': 'floor_nurse'},
     ])
     users_data.to_csv(users_local, index=False)
     print(f"Created local file {users_local}")
