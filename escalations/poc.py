@@ -42,7 +42,7 @@ def compute_md5(file_path):
 
 
 # Create local data directory if it doesn't exist
-data_dir = 'data'
+data_dir = 'escalations/data'
 if not os.path.exists(data_dir):
     os.makedirs(data_dir)
     print(f"Created local directory {data_dir}")
