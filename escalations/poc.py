@@ -61,10 +61,12 @@ if not os.path.exists(tasks_local):
         {'task_id': 4, 'task_type': 'medication', 'deadline': '2025-06-11T17:15:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': ''},
         {'task_id': 5, 'task_type': 'vitals', 'deadline': '2025-06-11T17:20:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'David_Brown'},
         {'task_id': 6, 'task_type': 'charting', 'deadline': '2025-06-11T17:25:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': ''},
-        {'task_id': 7, 'task_type': 'medication', 'deadline': '2025-06-11T17:30:00', 'assigned_nurse': 'Eve_Davis', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 7, 'task_type': 'medication', 'deadline': '2025-06-11T17:30:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 8, 'task_type': 'vitals', 'deadline': '2025-06-11T17:35:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 9, 'task_type': 'charting', 'deadline': '2025-06-11T17:40:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': ''},
-        {'task_id': 10, 'task_type': 'medication', 'deadline': '2025-06-11T17:45:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 10, 'task_type': 'medication', 'deadline': '2025-06-11T17:45:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
+        {'task_id': 11, 'task_type': 'vitals', 'deadline': '2025-06-11T17:50:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': ''},
+        {'task_id': 12, 'task_type': 'charting', 'deadline': '2025-06-11T17:55:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
     ])
     tasks_data.to_csv(tasks_local, index=False)
     print(f"Created local file {tasks_local}")
