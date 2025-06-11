@@ -3,7 +3,7 @@ import boto3
 import os
 import joblib
 import numpy as np
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import StandardScaler
@@ -36,12 +36,12 @@ scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_val = scaler.transform(X_val)
 
-selector = SelectKBest(f_classif, k=5)
+selector = SelectKBest(f_classif, k=7)
 X_train = selector.fit_transform(X_train, y_train)
 X_val = selector.transform(X_val)
 print(f"Selected feature indices: {selector.get_support(indices=True)}")
 
-smote = SMOTE(random_state=42, k_neighbors=2)
+smote = SMOTE(random_state=42, k_neighbors=3)
 X_train, y_train = smote.fit_resample(X_train, y_train)
 print(f"After SMOTE, samples: {len(y_train)}")
 print(f"SMOTE class distribution:\n{pd.Series(y_train).value_counts()}")
@@ -51,7 +51,7 @@ print(f"Validation samples: {len(X_val)}")
 print(f"Training classes:\n{pd.Series(y_train).value_counts()}")
 print(f"Validation classes:\n{pd.Series(y_val).value_counts()}")
 
-model = LogisticRegression(max_iter=1000, random_state=42, class_weight='balanced', C=0.1)
+model = RandomForestClassifier(n_estimators=50, max_depth=5, random_state=42, class_weight='balanced')
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 scores = cross_val_score(model, X_train, y_train, cv=skf, scoring='f1_weighted')
 print("Cross-Validation F1:", scores)
