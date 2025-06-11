@@ -12,15 +12,25 @@ from datetime import datetime, timedelta
 s3 = boto3.client('s3')
 bucket = 'escalation-poc'
 
-# Function to check if file exists in S3
+# Check if file exists in S3
 def file_exists_s3(bucket, key):
     try:
-        s3.head_object(Bucket=bucket, Key=key)
-        return True
+        response = s3.list_objects_v2(Bucket=bucket, Prefix=key, MaxKeys=1)
+        return 'Contents' in response and len(response['Contents']) > 0
     except ClientError as e:
         if e.response['Error']['Code'] == '404':
             return False
         raise e
+
+# Get S3 object's ETag
+def get_s3_etag(bucket, key):
+    try:
+        response = s3.list_objects_v2(Bucket=bucket, Prefix=key, MaxKeys=1)
+        if 'Contents' in response and len(response['Contents']) > 0:
+            return response['Contents'][0].get('ETag', '').strip('"')
+        return None
+    except ClientError:
+        return None
 
 # Function to compute MD5 hash of a file
 def compute_md5(file_path):
@@ -30,13 +40,6 @@ def compute_md5(file_path):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-# Function to get S3 object's ETag (without quotes)
-def get_s3_etag(bucket, key):
-    try:
-        response = s3.head_object(Bucket=bucket, Key=key)
-        return response['ETag'].strip('"')
-    except ClientError:
-        return None
 
 # Create local data directory if it doesn't exist
 data_dir = 'data'
