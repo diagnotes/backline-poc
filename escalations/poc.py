@@ -18,34 +18,34 @@ if not os.path.exists(tasks_local):
     tasks_data = pd.DataFrame([
         {'task_id': 1, 'task_type': 'medication', 'deadline': '2025-06-12T18:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 2, 'task_type': 'vitals', 'deadline': '2025-06-12T18:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 3, 'task_type': 'charting', 'deadline': '2025-06-11T17:10:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 4, 'task_type': 'medication', 'deadline': '2025-06-11T17:15:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 5, 'task_type': 'vitals', 'deadline': '2025-06-11T17:20:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 3, 'task_type': 'charting', 'deadline': '2025-06-11T17:10:00', 'assigned_nurse': 'David_Brown', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 4, 'task_type': 'medication', 'deadline': '2025-06-11T17:15:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'David_Brown'},
+        {'task_id': 5, 'task_type': 'vitals', 'deadline': '2025-06-11T17:20:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
         {'task_id': 6, 'task_type': 'charting', 'deadline': '2025-06-12T18:25:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 7, 'task_type': 'medication', 'deadline': '2025-06-11T17:30:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 8, 'task_type': 'vitals', 'deadline': '2025-06-11T17:35:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'David_Brown'},
+        {'task_id': 7, 'task_type': 'medication', 'deadline': '2025-06-11T17:30:00', 'assigned_nurse': 'Eve_Davis', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 8, 'task_type': 'vitals', 'deadline': '2025-06-11T17:35:00', 'assigned_nurse': 'David_Brown', 'status': 'pending', 'escalation_to': 'David_Brown'},
         {'task_id': 9, 'task_type': 'charting', 'deadline': '2025-06-12T18:40:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 10, 'task_type': 'medication', 'deadline': '2025-06-11T17:45:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 10, 'task_type': 'medication', 'deadline': '2025-06-11T17:45:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
         {'task_id': 11, 'task_type': 'vitals', 'deadline': '2025-06-12T18:50:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 12, 'task_type': 'charting', 'deadline': '2025-06-11T17:55:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 13, 'task_type': 'medication', 'deadline': '2025-06-11T18:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 14, 'task_type': 'vitals', 'deadline': '2025-06-11T18:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
+        {'task_id': 12, 'task_type': 'charting', 'deadline': '2025-06-11T17:55:00', 'assigned_nurse': 'Eve_Davis', 'status': 'pending', 'escalation_to': 'David_Brown'},
+        {'task_id': 13, 'task_type': 'medication', 'deadline': '2025-06-11T18:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 14, 'task_type': 'vitals', 'deadline': '2025-06-11T18:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'David_Brown'},
         {'task_id': 15, 'task_type': 'charting', 'deadline': '2025-06-12T19:00:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 16, 'task_type': 'medication', 'deadline': '2025-06-11T18:15:00', 'assigned_nurse': 'Carol_Williams', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 17, 'task_type': 'vitals', 'deadline': '2025-06-11T18:20:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 18, 'task_type': 'charting', 'deadline': '2025-06-11T18:25:00', 'assigned_nurse': 'Frank_Miller', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 16, 'task_type': 'medication', 'deadline': '2025-06-11T18:15:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 17, 'task_type': 'vitals', 'deadline': '2025-06-11T18:20:00', 'assigned_nurse': 'Eve_Davis', 'status': 'pending', 'escalation_to': 'David_Brown'},
+        {'task_id': 18, 'task_type': 'charting', 'deadline': '2025-06-11T18:25:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
         {'task_id': 19, 'task_type': 'medication', 'deadline': '2025-06-12T18:30:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 20, 'task_type': 'vitals', 'deadline': '2025-06-11T18:35:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 21, 'task_type': 'medication', 'deadline': '2025-06-11T18:40:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 20, 'task_type': 'vitals', 'deadline': '2025-06-11T18:35:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'David_Brown'},
+        {'task_id': 21, 'task_type': 'medication', 'deadline': '2025-06-11T18:40:00', 'assigned_nurse': 'David_Brown', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
         {'task_id': 22, 'task_type': 'vitals', 'deadline': '2025-06-12T18:45:00', 'assigned_nurse': 'Eve_Davis', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 23, 'task_type': 'charting', 'deadline': '2025-06-11T18:50:00', 'assigned_nurse': 'Frank_Miller', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 24, 'task_type': 'medication', 'deadline': '2025-06-11T18:55:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 23, 'task_type': 'charting', 'deadline': '2025-06-11T18:50:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': 'David_Brown'},
+        {'task_id': 24, 'task_type': 'medication', 'deadline': '2025-06-11T18:55:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
         {'task_id': 25, 'task_type': 'vitals', 'deadline': '2025-06-12T19:00:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 26, 'task_type': 'charting', 'deadline': '2025-06-11T19:05:00', 'assigned_nurse': 'Carol_Williams', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 27, 'task_type': 'medication', 'deadline': '2025-06-11T19:10:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 26, 'task_type': 'charting', 'deadline': '2025-06-11T19:05:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': 'David_Brown'},
+        {'task_id': 27, 'task_type': 'medication', 'deadline': '2025-06-11T19:10:00', 'assigned_nurse': 'David_Brown', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
         {'task_id': 28, 'task_type': 'vitals', 'deadline': '2025-06-12T19:15:00', 'assigned_nurse': 'Eve_Davis', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 29, 'task_type': 'charting', 'deadline': '2025-06-11T19:20:00', 'assigned_nurse': 'Frank_Miller', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 30, 'task_type': 'medication', 'deadline': '2025-06-11T19:25:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': 29, 'task_type': 'charting', 'deadline': '2025-06-11T19:20:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': 'David_Brown'},
+        {'task_id': 30, 'task_type': 'medication', 'deadline': '2025-06-11T19:25:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'Carol_Williams'},
     ])
     tasks_data.to_csv(tasks_local, index=False)
     print(f"Created {tasks_local}")
@@ -70,8 +70,8 @@ data['missed_2min'] = data['time_since_deadline'].apply(lambda x: 1 if x > 2 els
 data['missed_5min'] = data['time_since_deadline'].apply(lambda x: 1 if x > 5 else 0)
 data['task_type_medication'] = data['task_type'].apply(lambda x: 1 if x == 'medication' else 0)
 data['task_type_vitals'] = data['task_type'].apply(lambda x: 1 if x == 'vitals' else 0)
-data['status_escalated'] = data['status'].apply(lambda x: 1 if x == 'escalated' else 0)
 data['deadline_hour'] = pd.to_datetime(data['deadline'], utc=True).dt.hour
+data['nurse_experience'] = data['role'].apply(lambda x: 1 if x in ['charge_nurse', 'supervisor'] else 0)
 
 le_task = LabelEncoder()
 le_nurse = LabelEncoder()
@@ -84,7 +84,7 @@ data['escalation_to'] = le_target.fit_transform(data['escalation_to'].fillna('No
 
 features = [
     'task_type', 'deadline_missed', 'nurse_unavailable', 'missed_2min', 'missed_5min',
-    'task_type_medication', 'task_type_vitals', 'status_escalated', 'deadline_hour', 'assigned_nurse', 'role'
+    'task_type_medication', 'task_type_vitals', 'deadline_hour', 'assigned_nurse', 'role', 'nurse_experience'
 ]
 X = data[features]
 y = data['escalation_to']
@@ -96,7 +96,7 @@ print(y.value_counts())
 print("Missing values:")
 print(X.isna().sum())
 
-selector = SelectKBest(f_classif, k=5)
+selector = SelectKBest(f_classif, k=7)
 selector.fit(X, y)
 selected_indices = selector.get_support(indices=True)
 selected_features = [features[i] for i in selected_indices]

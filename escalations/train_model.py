@@ -51,7 +51,7 @@ print(f"Validation samples: {len(X_val)}")
 print(f"Training classes:\n{pd.Series(y_train).value_counts()}")
 print(f"Validation classes:\n{pd.Series(y_val).value_counts()}")
 
-model = RandomForestClassifier(n_estimators=50, max_depth=5, random_state=42, class_weight='balanced')
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42, class_weight='balanced')
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 scores = cross_val_score(model, X_train, y_train, cv=skf, scoring='f1_weighted')
 print("Cross-Validation F1:", scores)
