@@ -12,17 +12,6 @@ from datetime import datetime, timedelta
 s3 = boto3.client('s3')
 bucket = 'escalation-poc'
 
-# Create S3 bucket if it doesn't exist
-try:
-    s3.head_bucket(Bucket=bucket)
-    print(f"Bucket {bucket} already exists")
-except ClientError as e:
-    if e.response['Error']['Code'] == '404':
-        s3.create_bucket(Bucket=bucket)
-        print(f"Created bucket {bucket}")
-    else:
-        raise e
-
 # Function to check if file exists in S3
 def file_exists_s3(bucket, key):
     try:

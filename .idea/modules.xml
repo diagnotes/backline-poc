@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/poc.iml" filepath="$PROJECT_DIR$/.idea/poc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/backline-poc.iml" filepath="$PROJECT_DIR$/.idea/backline-poc.iml" />
     </modules>
   </component>
 </project>
