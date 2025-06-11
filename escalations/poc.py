@@ -1,16 +1,20 @@
 import pandas as pd
 import boto3
-import io
 import os
 import hashlib
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from botocore.exceptions import ClientError
-from datetime import datetime, timedelta
 
 # Initialize S3 client
 s3 = boto3.client('s3')
 bucket = 'escalation-poc'
+data_dir = 'escalations/data'
+
+# Create data directory
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
+    print(f"Created local directory {data_dir}")
 
 # Check if file exists in S3
 def file_exists_s3(bucket, key):
@@ -32,7 +36,7 @@ def get_s3_etag(bucket, key):
     except ClientError:
         return None
 
-# Function to compute MD5 hash of a file
+# Compute MD5 hash
 def compute_md5(file_path):
     hash_md5 = hashlib.md5()
     with open(file_path, 'rb') as f:
@@ -40,40 +44,45 @@ def compute_md5(file_path):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
+# Create S3 bucket if it doesn't exist
+try:
+    s3.head_bucket(Bucket=bucket)
+    print(f"Bucket {bucket} already exists")
+except ClientError as e:
+    if e.response['Error']['Code'] == '404':
+        s3.create_bucket(Bucket=bucket, CreateBucketConfiguration={'LocationConstraint': 'us-east-1'})
+        print(f"Created bucket {bucket}")
+    else:
+        raise e
 
-# Create local data directory if it doesn't exist
-data_dir = 'escalations/data'
-if not os.path.exists(data_dir):
-    os.makedirs(data_dir)
-    print(f"Created local directory {data_dir}")
-
-# Define local CSV paths
+# Define CSV paths
 tasks_local = os.path.join(data_dir, 'tasks.csv')
 schedules_local = os.path.join(data_dir, 'schedules.csv')
 rules_local = os.path.join(data_dir, 'rules.csv')
 users_local = os.path.join(data_dir, 'users.csv')
 
+# Create initial CSVs
 if not os.path.exists(tasks_local):
     tasks_data = pd.DataFrame([
-        {'task_id': 1, 'task_type': 'medication', 'deadline': '2025-06-11T17:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
-        {'task_id': 2, 'task_type': 'vitals', 'deadline': '2025-06-11T17:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 1, 'task_type': 'medication', 'deadline': '2025-06-12T17:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 2, 'task_type': 'vitals', 'deadline': '2025-06-12T17:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 3, 'task_type': 'charting', 'deadline': '2025-06-11T17:10:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 4, 'task_type': 'medication', 'deadline': '2025-06-11T17:15:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
         {'task_id': 5, 'task_type': 'vitals', 'deadline': '2025-06-11T17:20:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 6, 'task_type': 'charting', 'deadline': '2025-06-11T17:25:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 6, 'task_type': 'charting', 'deadline': '2025-06-12T17:25:00', 'assigned_nurse': 'Carol_Williams', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 7, 'task_type': 'medication', 'deadline': '2025-06-11T17:30:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 8, 'task_type': 'vitals', 'deadline': '2025-06-11T17:35:00', 'assigned_nurse': 'David_Brown', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 9, 'task_type': 'charting', 'deadline': '2025-06-11T17:40:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 9, 'task_type': 'charting', 'deadline': '2025-06-12T17:40:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 10, 'task_type': 'medication', 'deadline': '2025-06-11T17:45:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 11, 'task_type': 'vitals', 'deadline': '2025-06-11T17:50:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 11, 'task_type': 'vitals', 'deadline': '2025-06-12T17:50:00', 'assigned_nurse': 'Frank_Miller', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 12, 'task_type': 'charting', 'deadline': '2025-06-11T17:55:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 13, 'task_type': 'medication', 'deadline': '2025-06-11T18:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
+        {'task_id': '13', 'task_type': 'medication', 'deadline': '2025-06-11T18:00:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 14, 'task_type': 'vitals', 'deadline': '2025-06-11T18:05:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
-        {'task_id': 15, 'task_type': 'charting', 'deadline': '2025-06-11T18:10:00', 'assigned_nurse': 'David_Brown', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 15, 'task_type': 'charting', 'deadline': '2025-06-12T18:10:00', 'assigned_nurse': 'David_Brown', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 16, 'task_type': 'medication', 'deadline': '2025-06-11T18:15:00', 'assigned_nurse': 'Carol_Williams', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
         {'task_id': 17, 'task_type': 'vitals', 'deadline': '2025-06-11T18:20:00', 'assigned_nurse': 'Eve_Davis', 'status': 'escalated', 'escalation_to': 'David_Brown'},
         {'task_id': 18, 'task_type': 'charting', 'deadline': '2025-06-11T18:25:00', 'assigned_nurse': 'Frank_Miller', 'status': 'escalated', 'escalation_to': 'Carol_Williams'},
-        {'task_id': 19, 'task_type': 'medication', 'deadline': '2025-06-11T18:30:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
+        {'task_id': 19, 'task_type': 'medication', 'deadline': '2025-06-12T18:30:00', 'assigned_nurse': 'Alice_Johnson', 'status': 'pending', 'escalation_to': 'None'},
         {'task_id': 20, 'task_type': 'vitals', 'deadline': '2025-06-11T18:35:00', 'assigned_nurse': 'Bob_Smith', 'status': 'escalated', 'escalation_to': 'David_Brown'},
     ])
     tasks_data.to_csv(tasks_local, index=False)
@@ -91,6 +100,15 @@ if not os.path.exists(schedules_local):
     schedules_data.to_csv(schedules_local, index=False)
     print(f"Created local file {schedules_local}")
 
+if not os.path.exists(rules_local):
+    rules_data = pd.DataFrame([
+        {'rule_id': 1, 'rule_text': 'If task is not completed in 2 minutes, escalate to the charge nurse'},
+        {'rule_id': 2, 'rule_text': 'If nurse is unavailable, escalate to the supervisor'},
+        {'rule_id': 3, 'rule_text': 'If task type is medication and not completed in 5 minutes, escalate to the charge nurse'},
+    ])
+    rules_data.to_csv(rules_local, index=False)
+    print(f"Created local file {rules_local}")
+
 if not os.path.exists(users_local):
     users_data = pd.DataFrame([
         {'user_id': 'Alice_Johnson', 'first_name': 'Alice', 'last_name': 'Johnson', 'role': 'floor_nurse'},
@@ -103,21 +121,12 @@ if not os.path.exists(users_local):
     users_data.to_csv(users_local, index=False)
     print(f"Created local file {users_local}")
 
-if not os.path.exists(rules_local):
-    rules_data = pd.DataFrame([
-        {'rule_id': 1, 'rule_text': 'If task is not completed in 2 minutes, escalate to the charge nurse'},
-        {'rule_id': 2, 'rule_text': 'If nurse is unavailable, escalate to the supervisor'},
-        {'rule_id': 3, 'rule_text': 'If task type is medication and not completed in 5 minutes, escalate to the charge nurse'}
-    ])
-    rules_data.to_csv(rules_local, index=False)
-    print(f"Created local file {rules_local}")
-
-# Upload CSV files to S3 only if changed or missing
+# Upload CSVs to S3
 s3_keys = {
     tasks_local: 'data/tasks.csv',
     schedules_local: 'data/schedules.csv',
     rules_local: 'data/rules.csv',
-    users_local: 'data/users.csv'
+    users_local: 'data/users.csv',
 }
 
 for local_file, s3_key in s3_keys.items():
@@ -125,15 +134,21 @@ for local_file, s3_key in s3_keys.items():
     s3_etag = get_s3_etag(bucket, s3_key)
     if not file_exists_s3(bucket, s3_key) or local_md5 != s3_etag:
         s3.upload_file(local_file, bucket, s3_key)
-        print(f"Uploaded {local_file} to s3://{bucket}/{s3_key} (changed or missing)")
+        print(f"Uploaded {local_file} to s3://{bucket}/{s3_key}")
     else:
-        print(f"s3://{bucket}/{s3_key} is up-to-date (no changes)")
+        print(f"s3://{bucket}/{s3_key} is up-to-date")
 
 # Download CSVs from S3
 for s3_key in s3_keys.values():
     local_file = os.path.join(data_dir, os.path.basename(s3_key))
-    s3.download_file(bucket, s3_key, local_file)
-    print(f"Downloaded s3://{bucket}/{s3_key} to {local_file}")
+    try:
+        s3.download_file(bucket, s3_key, local_file)
+        print(f"Downloaded s3://{bucket}/{s3_key} to {local_file}")
+    except ClientError as e:
+        if e.response['Error']['Code'] == '404':
+            print(f"s3://{bucket}/{s3_key} not found, skipping download")
+        else:
+            raise e
 
 # Load data
 tasks = pd.read_csv(tasks_local)
@@ -152,7 +167,7 @@ data['deadline_missed'] = pd.to_datetime(data['deadline'], utc=True) < current_t
 data['task_type_medication'] = data['task_type'].apply(lambda x: 1 if x == 'medication' else 0)
 
 # Parse time-based rules
-data['time_since_deadline'] = (current_time - pd.to_datetime(data['deadline'], utc=True)).dt.total_seconds() / 60  # in minutes
+data['time_since_deadline'] = (current_time - pd.to_datetime(data['deadline'], utc=True)).dt.total_seconds() / 60
 data['missed_2min'] = data['time_since_deadline'].apply(lambda x: 1 if x > 2 else 0)
 data['missed_5min'] = data['time_since_deadline'].apply(lambda x: 1 if x > 5 else 0)
 
@@ -175,13 +190,16 @@ data['task_type'] = le_task.fit_transform(data['task_type'])
 data['assigned_nurse'] = le_nurse.fit_transform(data['assigned_nurse'])
 data['role'] = le_role.fit_transform(data['role'].fillna('None'))
 data['full_name'] = le_name.fit_transform(data['full_name'].fillna('None'))
-data['escalation_to'] = data['escalation_to'].fillna('None')
+data['escalation_to'] = data['escalation_to'].replace('', 'None')
 data['escalation_to'] = le_target.fit_transform(data['escalation_to'])
 
 # Convert datetime to numerical features
 data['deadline_hour'] = pd.to_datetime(data['deadline'], utc=True).dt.hour
 data['shift_start_hour'] = pd.to_datetime(data['shift_start'], utc=True).dt.hour
 data['shift_end_hour'] = pd.to_datetime(data['shift_end'], utc=True).dt.hour
+
+# Handle missing values
+data = data.fillna(0)
 
 # Select features and target
 features = [
@@ -192,6 +210,14 @@ features = [
 X = data[features]
 y = data['escalation_to']
 
+# Debug features
+print("Feature summary:")
+print(X.describe())
+print("Target distribution:")
+print(y.value_counts())
+print("Missing values:")
+print(X.isna().sum())
+
 # Split data
 try:
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
@@ -199,9 +225,15 @@ except ValueError as e:
     print(f"Stratified split failed: {e}. Using non-stratified split.")
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
+# Debug split
+print(f"Training samples: {len(X_train)}")
+print(f"Validation samples: {len(X_val)}")
+print(f"Training class distribution:\n{y_train.value_counts()}")
+print(f"Validation class distribution:\n{y_val.value_counts()}")
+
 # Save training and validation data
-train_data = pd.concat([y_train, X_train], axis=1)
-val_data = pd.concat([y_val, X_val], axis=1)
+train_data = pd.concat([y_train.reset_index(drop=True), X_train.reset_index(drop=True)], axis=1)
+val_data = pd.concat([y_val.reset_index(drop=True), X_val.reset_index(drop=True)], axis=1)
 train_data.to_csv(os.path.join(data_dir, 'train.csv'), index=False, header=False)
 val_data.to_csv(os.path.join(data_dir, 'validation.csv'), index=False, header=False)
 
