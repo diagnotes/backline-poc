@@ -92,6 +92,8 @@ data['task_type_medication'] = data['task_type'].apply(lambda x: 1 if x == 'medi
 data['task_type_vitals'] = data['task_type'].apply(lambda x: 1 if x == 'vitals' else 0)
 data['deadline_hour'] = pd.to_datetime(data['deadline'], utc=True).dt.hour
 data['nurse_experience'] = data['role'].apply(lambda x: 1 if x in ['charge_nurse', 'supervisor'] else 0)
+data['is_supervisor'] = data['assigned_nurse'].apply(lambda x: 1 if x == 'Carol_Williams' else 0)
+data['is_charge_nurse'] = data['assigned_nurse'].apply(lambda x: 1 if x == 'David_Brown' else 0)
 
 le_task = LabelEncoder()
 le_nurse = LabelEncoder()
@@ -104,7 +106,8 @@ data['escalation_to'] = le_target.fit_transform(data['escalation_to'].fillna('No
 
 features = [
     'task_type', 'deadline_missed', 'nurse_unavailable', 'missed_2min', 'missed_5min',
-    'task_type_medication', 'task_type_vitals', 'deadline_hour', 'assigned_nurse', 'role', 'nurse_experience'
+    'task_type_medication', 'task_type_vitals', 'deadline_hour', 'assigned_nurse',
+    'role', 'nurse_experience', 'is_supervisor', 'is_charge_nurse'
 ]
 X = data[features]
 y = data['escalation_to']
@@ -116,7 +119,7 @@ print(y.value_counts())
 print("Missing values:")
 print(X.isna().sum())
 
-selector = SelectKBest(f_classif, k=7)
+selector = SelectKBest(f_classif, k=9)
 selector.fit(X, y)
 selected_indices = selector.get_support(indices=True)
 selected_features = [features[i] for i in selected_indices]
