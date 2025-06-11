@@ -3,7 +3,7 @@ import boto3
 import os
 import joblib
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score, KFold
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import classification_report
 from botocore.exceptions import ClientError
 
@@ -50,17 +50,18 @@ class_counts = y_train.value_counts()
 print(f"Number of training samples: {n_samples}")
 print(f"Number of validation samples: {len(y_val)}")
 print(f"Training class distribution:\n{class_counts}")
+print(f"Validation class distribution:\n{y_val.value_counts()}")
 
 # Train model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
 
-# Try cross-validation with non-stratified KFold
+# Try cross-validation with stratified KFold
 min_samples_per_class = class_counts.min()
-cv = min(3, n_samples, min_samples_per_class)
+cv = min(5, n_samples, min_samples_per_class)
 if cv >= 2:
     try:
-        kf = KFold(n_splits=cv, shuffle=True, random_state=42)  # Non-stratified
-        scores = cross_val_score(model, X_train, y_train, cv=kf, scoring='f1_weighted')
+        skf = StratifiedKFold(n_splits=cv, shuffle=True, random_state=42)
+        scores = cross_val_score(model, X_train, y_train, cv=skf, scoring='f1_weighted')
         print("Cross-Validation F1 Scores:", scores)
         print("Mean F1 Score:", scores.mean())
         print("Standard Deviation:", scores.std())
@@ -77,7 +78,9 @@ model.fit(X_train, y_train)
 if len(y_val) > 0:
     y_pred = model.predict(X_val)
     print("Classification Report:")
-    print(classification_report(y_val, y_pred))
+    print(classification_report(y_val, y_pred, zero_division=0))
+else:
+    print("No validation data available")
 
 # Save model
 model_local = os.path.join(data_dir, 'model.job')
